@@ -38,6 +38,12 @@ public class ApiGatewayApplication {
                 .route("reclamation-service",
                         r -> r.path("/api/reclamations/**")
                                 .uri("lb://RECLAMATION-SERVICE"))
+                .route("gestion-utilisateur",
+                        r -> r.path("/api/utilisateurs/**")
+                                .uri("lb://GESTION-UTILISATEUR"))
+                .route("gestion-utilisateur",
+                        r -> r.path("/api/roles/**")
+                                .uri("lb://GESTION-UTILISATEUR"))
                 .build();
     }
 }
