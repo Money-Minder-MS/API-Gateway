@@ -20,6 +20,12 @@ public class ApiGatewayApplication {
                 .route("revenue-service",
                         r -> r.path("/revenues/**")
                                 .uri("lb://REVENUE-SERVICE"))
+                .route("forum",
+                        r -> r.path("/api/commentaires/**")
+                                .uri("lb://FORUM"))
+                .route("forum",
+                        r -> r.path("/api/posts/**")
+                                .uri("lb://FORUM"))
                 .build();
     }
 }
