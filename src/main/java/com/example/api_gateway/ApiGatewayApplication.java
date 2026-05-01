@@ -26,6 +26,9 @@ public class ApiGatewayApplication {
                 .route("gestion-objectif",
                         r -> r.path("/api/categories/**")
                                 .uri("lb://GESTION-OBJECTIF"))
+                .route("reclamation-service",
+                        r -> r.path("/api/reclamations/**")
+                                .uri("lb://RECLAMATION-SERVICE"))
                 .build();
     }
 }
