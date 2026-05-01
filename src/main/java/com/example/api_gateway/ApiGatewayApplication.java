@@ -16,12 +16,10 @@ public class ApiGatewayApplication {
     }
     @Bean
     public RouteLocator getRoute(RouteLocatorBuilder builder) {
-        return builder.routes().
-                route("candidat",
-                        r->r.path("/candidats/**")
-                                .uri("lb://Candidat"))
-                .route("job",r->r.path("/jobs/**")
-                        .uri("lb://JobMs"))
+        return builder.routes()
+                .route("revenue-service",
+                        r -> r.path("/revenues/**")
+                                .uri("lb://REVENUE-SERVICE"))
                 .build();
     }
 }
