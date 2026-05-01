@@ -26,6 +26,15 @@ public class ApiGatewayApplication {
                 .route("forum",
                         r -> r.path("/api/posts/**")
                                 .uri("lb://FORUM"))
+                .route("gestion-objectif",
+                        r -> r.path("/api/objectifs/**")
+                                .uri("lb://GESTION-OBJECTIF"))
+                .route("gestion-objectif",
+                        r -> r.path("/api/categories/**")
+                                .uri("lb://GESTION-OBJECTIF"))
+                .route("reclamation-service",
+                        r -> r.path("/api/reclamations/**")
+                                .uri("lb://RECLAMATION-SERVICE"))
                 .build();
     }
 }
