@@ -20,6 +20,12 @@ public class ApiGatewayApplication {
                 .route("revenue-service",
                         r -> r.path("/revenues/**")
                                 .uri("lb://REVENUE-SERVICE"))
+
+                // Ajoute ces lignes avec les autres routes :
+                .route("depense",
+                        r -> r.path("/api/depenses/**")
+                                .uri("lb://DEPENSE"))
+                // ← nom en MAJUSCULE
                 .route("revenue-service",
                         r -> r.path("/categories/**")
                                 .uri("lb://REVENUE-SERVICE"))
@@ -45,5 +51,6 @@ public class ApiGatewayApplication {
                         r -> r.path("/api/roles/**")
                                 .uri("lb://GESTION-UTILISATEUR"))
                 .build();
+
     }
 }
