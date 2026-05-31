@@ -14,6 +14,7 @@ public class ApiGatewayApplication {
     public static void main(String[] args) {
         SpringApplication.run(ApiGatewayApplication.class, args);
     }
+
     @Bean
     public RouteLocator getRoute(RouteLocatorBuilder builder) {
         return builder.routes()
@@ -35,6 +36,10 @@ public class ApiGatewayApplication {
                 .route("reclamation-service",
                         r -> r.path("/api/reclamations/**")
                                 .uri("lb://RECLAMATION-SERVICE"))
+                // Nouvelle route ajoutée pour le microservice de notification
+                .route("ms-notification",
+                        r -> r.path("/api/notifications/**")
+                                .uri("lb://MS-NOTIFICATION"))
                 .build();
     }
 }
