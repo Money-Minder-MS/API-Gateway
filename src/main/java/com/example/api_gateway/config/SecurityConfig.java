@@ -28,6 +28,9 @@ public class SecurityConfig {
                         // === Public (aucun token requis) ===
                         .pathMatchers("/actuator/health").permitAll()
                         .pathMatchers("/actuator/info").permitAll()
+                        .pathMatchers("/swagger-ui.html", "/swagger-ui/**").permitAll()
+                                .pathMatchers("/v3/api-docs/**").permitAll()
+                                .pathMatchers("/webjars/**").permitAll()
                         .pathMatchers(HttpMethod.POST, "/api/utilisateurs/add").permitAll()
                         .pathMatchers(HttpMethod.GET, "/api/roles/getall").permitAll()
                         .pathMatchers(HttpMethod.GET, "/api/roles/getbyid/**").permitAll()
