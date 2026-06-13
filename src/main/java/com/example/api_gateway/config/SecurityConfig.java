@@ -2,7 +2,6 @@ package com.example.api_gateway.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.web.server.SecurityWebFilterChain;
@@ -25,26 +24,33 @@ public class SecurityConfig {
                 .securityContextRepository(NoOpServerSecurityContextRepository.getInstance())
                 .authorizeExchange(exchanges -> exchanges
 
-                        // === Public (aucun token requis) ===
-                        .pathMatchers("/actuator/health").permitAll()
-                        .pathMatchers("/actuator/info").permitAll()
+                        // === Préflight CORS toujours autorisé ===
+                        .pathMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
+
+                        // === Infra / docs (aucun token requis) ===
+                        .pathMatchers("/actuator/**").permitAll()
                         .pathMatchers("/swagger-ui.html", "/swagger-ui/**").permitAll()
-                                .pathMatchers("/v3/api-docs/**").permitAll()
-                                .pathMatchers("/webjars/**").permitAll()
-                        .pathMatchers(HttpMethod.POST, "/api/utilisateurs/add").permitAll()
-                        .pathMatchers(HttpMethod.GET, "/api/roles/getall").permitAll()
-                        .pathMatchers(HttpMethod.GET, "/api/roles/getbyid/**").permitAll()
+                        .pathMatchers("/v3/api-docs/**", "/*/v3/api-docs/**").permitAll()
+                        .pathMatchers("/webjars/**").permitAll()
 
-                        // === Admin uniquement ===
-                        .pathMatchers(HttpMethod.DELETE, "/api/**").hasRole("ADMIN")
-                        .pathMatchers(HttpMethod.PUT, "/api/utilisateurs/update").hasRole("ADMIN")
-                        .pathMatchers(HttpMethod.DELETE, "/api/utilisateurs/**").hasRole("ADMIN")
-                        .pathMatchers(HttpMethod.POST, "/api/roles/**").hasRole("ADMIN")
-                        .pathMatchers(HttpMethod.PUT, "/api/roles/**").hasRole("ADMIN")
-                        .pathMatchers(HttpMethod.DELETE, "/api/roles/**").hasRole("ADMIN")
+                        // === Endpoints publics pré-login ===
+                        // Inscription : pas de token disponible (le user n'existe pas encore)
+                        .pathMatchers(org.springframework.http.HttpMethod.POST, "/api/utilisateurs/register-keycloak").permitAll()
+                        // Sync : appelé juste après obtention du token Keycloak
+                        .pathMatchers(org.springframework.http.HttpMethod.POST, "/api/utilisateurs/sync-keycloak").permitAll()
+                        // Liste des rôles (lecture publique pour l'UI)
+                        .pathMatchers(org.springframework.http.HttpMethod.GET, "/api/roles/getall").permitAll()
 
-                        // === Tout le reste = authentifié ===
-                        .anyExchange().authenticated()
+                        // === Routes Admin-only ===
+                        .pathMatchers("/api/utilisateurs/getall", "/api/utilisateurs/delete/**").hasRole("ADMIN")
+                        .pathMatchers(org.springframework.http.HttpMethod.DELETE, "/api/reclamations/**").hasRole("ADMIN")
+                        .pathMatchers(org.springframework.http.HttpMethod.PUT, "/api/reclamations/*/statut", "/api/reclamations/*/repondre").hasRole("ADMIN")
+                        .pathMatchers("/api/roles/add", "/api/roles/update", "/api/roles/delete/**").hasRole("ADMIN")
+
+                        // === Tout le reste des routes API nécessite un token Keycloak valide ===
+                        .pathMatchers("/api/**", "/revenues/**", "/categories/**").authenticated()
+
+                        .anyExchange().permitAll()
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2
                         .jwt(jwt -> jwt
